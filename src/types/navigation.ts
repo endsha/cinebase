@@ -1,4 +1,6 @@
 export type RootStackParamList = {
   BottomTab: undefined;
-  Detail: undefined;
+  MovieDetail: {
+    movieId: string;
+  };
 };

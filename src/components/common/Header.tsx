@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import React from 'react';
-import Logo from '../../assets/images/Logo.svg';
+import Logo from '@assets/images/Logo.svg';
 
 export default function Header() {
   const insets = useSafeAreaInsets();

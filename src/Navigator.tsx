@@ -3,14 +3,14 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // Icons
-import HomeIcon from './assets/icons/home.svg';
-import WatchListIcon from './assets/icons/watchlist.svg';
+import HomeIcon from '@assets/icons/home.svg';
+import WatchListIcon from '@assets/icons/watchlist.svg';
 
 // Screens
-import HomeScreen from './screens/HomeScreen';
-import DetailScreen from './screens/DetailScreen';
-import WatchListScreen from './screens/WatchListScreen';
-import Header from './components/common/Header';
+import HomeScreen from '@screens/HomeScreen';
+import MovieDetailScreen from '@screens/MovieDetailScreen';
+import WatchListScreen from '@screens/WatchListScreen';
+import Header from '@components/common/Header';
 
 const Stack = createNativeStackNavigator();
 const BottomTab = createBottomTabNavigator();
@@ -62,8 +62,8 @@ export default function Navigator() {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="Detail"
-        component={DetailScreen}
+        name="MovieDetail"
+        component={MovieDetailScreen}
         options={{
           header: () => <Header />,
         }}
