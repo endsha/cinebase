@@ -1,5 +1,10 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+// Icons
+import HomeIcon from './assets/icons/home.svg';
+import WatchListIcon from './assets/icons/watchlist.svg';
 
 // Screens
 import HomeScreen from './screens/HomeScreen';
@@ -11,13 +16,29 @@ const Stack = createNativeStackNavigator();
 const BottomTab = createBottomTabNavigator();
 
 function BottomTabNavigator() {
+  const insets = useSafeAreaInsets();
+
+  console.log('insets', insets);
+
   return (
-    <BottomTab.Navigator>
+    <BottomTab.Navigator
+      screenOptions={{
+        tabBarShowLabel: false,
+        tabBarStyle: {
+          height: 60 + insets.bottom,
+          backgroundColor: '#032541',
+        },
+        tabBarItemStyle: {
+          paddingTop: 12,
+        },
+      }}
+    >
       <BottomTab.Screen
         name="Home"
         component={HomeScreen}
         options={{
           header: () => <Header />,
+          tabBarIcon: () => <HomeIcon />,
         }}
       />
       <BottomTab.Screen
@@ -25,6 +46,7 @@ function BottomTabNavigator() {
         component={WatchListScreen}
         options={{
           header: () => <Header />,
+          tabBarIcon: () => <WatchListIcon />,
         }}
       />
     </BottomTab.Navigator>
