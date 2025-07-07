@@ -5,6 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from './screens/HomeScreen';
 import DetailScreen from './screens/DetailScreen';
 import WatchListScreen from './screens/WatchListScreen';
+import Header from './components/common/Header';
 
 const Stack = createNativeStackNavigator();
 const BottomTab = createBottomTabNavigator();
@@ -12,8 +13,20 @@ const BottomTab = createBottomTabNavigator();
 function BottomTabNavigator() {
   return (
     <BottomTab.Navigator>
-      <BottomTab.Screen name="Home" component={HomeScreen} />
-      <BottomTab.Screen name="WatchList" component={WatchListScreen} />
+      <BottomTab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{
+          header: () => <Header />,
+        }}
+      />
+      <BottomTab.Screen
+        name="WatchList"
+        component={WatchListScreen}
+        options={{
+          header: () => <Header />,
+        }}
+      />
     </BottomTab.Navigator>
   );
 }
@@ -26,7 +39,13 @@ export default function Navigator() {
         component={BottomTabNavigator}
         options={{ headerShown: false }}
       />
-      <Stack.Screen name="Detail" component={DetailScreen} />
+      <Stack.Screen
+        name="Detail"
+        component={DetailScreen}
+        options={{
+          header: () => <Header />,
+        }}
+      />
     </Stack.Navigator>
   );
 }
