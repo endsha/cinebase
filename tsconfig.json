@@ -8,7 +8,8 @@
       "@assets/*": ["./src/assets/*"],
       "@constants/*": ["./src/constants/*"],
       "@custom-types/*": ["./src/types/*"],
-      "@services": ["./src/services"]
+      "@redux/*": ["./src/redux/*"],
+      "@services/*": ["./src/services/*"]
     }
   },
   "extends": "@react-native/typescript-config"

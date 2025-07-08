@@ -2,7 +2,8 @@ import { RootStackParamList } from '@custom-types/navigation';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import Image from '@components/common/Image';
 
 type MovieCardProps = {
   id: string;
@@ -33,8 +34,10 @@ const MovieCard: React.FC<MovieCardProps> = ({
         resizeMode="cover"
       />
       <View style={styles.info}>
-        <Text style={styles.name}>{name}</Text>
-        <Text style={styles.releaseDate}>{releaseDate}</Text>
+        <View>
+          <Text style={styles.name}>{name}</Text>
+          <Text style={styles.releaseDate}>{releaseDate}</Text>
+        </View>
         <Text style={styles.description} numberOfLines={3}>
           {description}
         </Text>
@@ -45,34 +48,47 @@ const MovieCard: React.FC<MovieCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
+    width: '100%',
     flexDirection: 'row',
     backgroundColor: '#fff',
-    borderRadius: 10,
-    elevation: 2,
-    overflow: 'hidden',
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#E3E3E3',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 4, // Android shadow
   },
   image: {
     width: 100,
     height: 150,
+    borderTopLeftRadius: 5,
+    borderBottomLeftRadius: 5,
   },
   info: {
     flex: 1,
-    padding: 12,
-    justifyContent: 'center',
+    paddingHorizontal: 15,
+    paddingVertical: 20,
+    justifyContent: 'space-between',
   },
   name: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 4,
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 2,
   },
   releaseDate: {
     fontSize: 14,
-    color: '#888',
-    marginBottom: 8,
+    fontWeight: '400',
+    color: '#999999',
   },
   description: {
     fontSize: 14,
-    color: '#444',
+    fontWeight: '400',
+    color: '#000',
   },
 });
 

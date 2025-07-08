@@ -1,4 +1,5 @@
 import Avatar from '@components/common/Avatar';
+import MovieCard from '@components/common/MovieCard';
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, Image } from 'react-native';
 
@@ -60,39 +61,9 @@ const WatchListScreen: React.FC = () => {
         style={{ width: '100%' }}
         data={mockWatchList}
         keyExtractor={item => item.id}
-        renderItem={({ item }) => (
-          <View
-            style={{
-              margin: 10,
-              padding: 10,
-              backgroundColor: '#f9f9f9',
-              borderRadius: 8,
-              flexDirection: 'row',
-              alignItems: 'flex-start',
-            }}
-          >
-            <Image
-              source={{ uri: item.imageUrl }}
-              style={{
-                width: 80,
-                height: 120,
-                borderRadius: 6,
-                marginRight: 12,
-              }}
-              resizeMode="cover"
-            />
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 18, fontWeight: 'bold' }}>
-                {item.name}
-              </Text>
-              <Text style={{ color: '#666', marginBottom: 5 }}>
-                {item.releaseDate}
-              </Text>
-              <Text>{item.description}</Text>
-            </View>
-          </View>
-        )}
-        contentContainerStyle={{ paddingBottom: 20 }}
+        renderItem={({ item }) => <MovieCard {...item} />}
+        contentContainerStyle={{ paddingVertical: 20, paddingHorizontal: 30 }}
+        ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
         ListEmptyComponent={() => (
           <Text style={{ textAlign: 'center', marginTop: 20 }}>
             Your watch list is empty.

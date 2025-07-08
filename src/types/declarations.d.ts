@@ -4,3 +4,9 @@ declare module '*.svg' {
   const content: React.FC<SvgProps>;
   export default content;
 }
+
+declare module '@env' {
+  export const TOKEN: string;
+  export const API_URL: string;
+  // Add other env variables here if needed
+}

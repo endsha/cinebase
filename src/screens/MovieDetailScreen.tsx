@@ -7,48 +7,21 @@ import {
   TouchableOpacity,
   Image,
   FlatList,
+  SafeAreaView,
 } from 'react-native';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import LeftArrowIcon from '@assets/icons/left-arrow.svg';
 import { RootStackParamList } from '@custom-types/navigation';
 import { StackNavigationProp } from '@react-navigation/stack';
 import WatchListIcon from '@assets/icons/watchlist.svg';
-
-type MovieDetail = {
-  id: string;
-  imageUrl: string;
-  name: string;
-  releaseDate: string;
-  shortDescription: string;
-  ageRating: string;
-  duration: string;
-  genres: string[];
-  director: string;
-  writer: string;
-  score: number;
-  description: string;
-  status: string;
-  language: string;
-};
-
-const mockData: MovieDetail = {
-  id: '1',
-  imageUrl: 'https://image.tmdb.org/t/p/w500/iuFNMS8U5cb6xfzi51Dbkovj7vM.jpg', // Barbie (2023) poster from TMDB
-  name: 'Barbie',
-  releaseDate: '2023-07-21',
-  shortDescription:
-    'Barbie suffers a crisis that leads her to question her world and her existence.',
-  ageRating: 'PG13',
-  duration: '1h 54m',
-  genres: ['Adventure', 'Comedy', 'Fantasy'],
-  director: 'Greta Gerwig',
-  writer: 'Noah Baumbach',
-  score: 7.2,
-  description:
-    'Barbie and Ken are having the time of their lives in the colorful and seemingly perfect world of Barbie Land. However, when they get a chance to go to the real world, they soon discover the joys and perils of living among humans.',
-  status: 'Released',
-  language: 'English',
-};
+import {
+  useMovieDetailQuery,
+  useMovieCreditsQuery,
+  useMovieRecommendationsQuery,
+} from '@services/movieDetailService';
+import Loading from '@components/common/Loading';
+import { MovieDetail } from '@custom-types/movie';
+import { AnimatedCircularProgress } from 'react-native-circular-progress';
 
 type CastMember = {
   id: string;
@@ -57,39 +30,6 @@ type CastMember = {
   role: string;
 };
 
-const mockTopBilledCast: CastMember[] = [
-  {
-    id: '1',
-    imageUrl: 'https://image.tmdb.org/t/p/w185/iu3bQpt4HiRrN1wWx2h6GVZIp9U.jpg', // Margot Robbie
-    name: 'Margot Robbie',
-    role: 'Barbie',
-  },
-  {
-    id: '2',
-    imageUrl: 'https://image.tmdb.org/t/p/w185/7k1J9cC0l7KqQkLkR5Q1QMQS8gO.jpg', // Ryan Gosling
-    name: 'Ryan Gosling',
-    role: 'Ken',
-  },
-  {
-    id: '3',
-    imageUrl: 'https://image.tmdb.org/t/p/w185/8QBylBsQf4llkGrWR3qAsOtOU8O.jpg', // America Ferrera
-    name: 'America Ferrera',
-    role: 'Gloria',
-  },
-  {
-    id: '4',
-    imageUrl: 'https://image.tmdb.org/t/p/w185/1YjdSym1jTG7xjHSI0yGGWEsw5i.jpg', // Kate McKinnon
-    name: 'Kate McKinnon',
-    role: 'Weird Barbie',
-  },
-  {
-    id: '5',
-    imageUrl: 'https://image.tmdb.org/t/p/w185/3bOGNsHlrswhyW79uvIHH1V43JI.jpg', // Issa Rae
-    name: 'Issa Rae',
-    role: 'President Barbie',
-  },
-];
-
 type Recommendation = {
   id: string;
   name: string;
@@ -97,50 +37,59 @@ type Recommendation = {
   userScorePercent: number;
 };
 
-const mockRecommendations: Recommendation[] = [
-  {
-    id: '2',
-    name: 'Oppenheimer',
-    imageUrl: 'https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',
-    userScorePercent: 93,
-  },
-  {
-    id: '3',
-    name: 'The Little Mermaid',
-    imageUrl: 'https://image.tmdb.org/t/p/w500/ym1dxyOk4jFcSl4Q2zmRrA5BEEN.jpg',
-    userScorePercent: 67,
-  },
-  {
-    id: '4',
-    name: 'Mission: Impossible - Dead Reckoning Part One',
-    imageUrl: 'https://image.tmdb.org/t/p/w500/NNxYkU70HPurnNCSiCjYAmacwm.jpg',
-    userScorePercent: 81,
-  },
-  {
-    id: '5',
-    name: 'Elemental',
-    imageUrl: 'https://image.tmdb.org/t/p/w500/4Y1WNkd88JXmGfhtWR7dmDAo1T2.jpg',
-    userScorePercent: 76,
-  },
-  {
-    id: '6',
-    name: 'Spider-Man: Across the Spider-Verse',
-    imageUrl: 'https://image.tmdb.org/t/p/w500/8Vt6mWEReuy4Of61Lnj5Xj704m8.jpg',
-    userScorePercent: 95,
-  },
-];
-
 const MovieDetailScreen: React.FC = () => {
   const route = useRoute<RouteProp<RootStackParamList, 'MovieDetail'>>();
   const { movieId } = route.params;
 
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
-  console.log('Movie ID:', movieId);
+  const {
+    data: movieDetail,
+    isLoading: movieDetailIsLoading,
+    error: movieDetailError,
+  } = useMovieDetailQuery({
+    movieId,
+  });
+
+  const {
+    data: movieCredits,
+    isLoading: movieCreditsIsLoading,
+    error: movieCreditsError,
+  } = useMovieCreditsQuery({
+    movieId,
+  });
+
+  const {
+    data: movieRecommendations,
+    isLoading: movieRecommendationsIsLoading,
+    error: movieRecommendationsError,
+  } = useMovieRecommendationsQuery({
+    movieId,
+  });
 
   const handleGoBack = () => {
     navigation.goBack();
   };
+
+  const handleRecommendationPress = (id: string) => {
+    navigation.push('MovieDetail', {
+      movieId: id,
+    });
+  };
+
+  if (
+    movieDetailIsLoading ||
+    movieCreditsIsLoading ||
+    movieRecommendationsIsLoading
+  ) {
+    return (
+      <SafeAreaView
+        style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+      >
+        <Loading />
+      </SafeAreaView>
+    );
+  }
 
   return (
     <ScrollView
@@ -157,35 +106,35 @@ const MovieDetailScreen: React.FC = () => {
             ellipsizeMode="tail"
             style={styles.headerText}
           >
-            {mockData.name}
+            {movieDetail.name}
           </Text>
         </View>
 
         <View style={styles.overviewInfo}>
           <Image
-            source={{ uri: mockData.imageUrl }}
+            source={{ uri: movieDetail.imageUrl }}
             style={styles.movieImage}
           />
           <View>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Text style={{ ...styles.overviewText, ...styles.ageRating }}>
-                {mockData.ageRating}
+                {movieDetail.ageRating}
               </Text>
             </View>
 
             <Text style={styles.overviewText}>
-              {mockData.releaseDate} • {mockData.duration}
+              {movieDetail.releaseDate} • {movieDetail.duration}
             </Text>
             <Text style={styles.overviewText}>
-              {mockData.genres.join(', ')}
+              {movieDetail.genres.join(', ')}
             </Text>
             <Text style={styles.overviewText}>
               <Text style={{ fontWeight: '600' }}>Status: </Text>
-              {mockData.status}
+              {movieDetail.status}
             </Text>
             <Text style={styles.overviewText}>
               <Text style={{ fontWeight: '600' }}>Original Language: </Text>
-              {mockData.language}
+              {movieDetail.language}
             </Text>
           </View>
         </View>
@@ -199,26 +148,50 @@ const MovieDetailScreen: React.FC = () => {
                 height: 60,
                 backgroundColor: '#042541',
                 borderRadius: 30,
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
               }}
-            />
+            >
+              <AnimatedCircularProgress
+                size={52}
+                width={3}
+                fill={Math.round((movieDetail.score / 10) * 100)}
+                tintColor="#45FF8F"
+                onAnimationComplete={() => console.log('onAnimationComplete')}
+                backgroundColor="#D0D2D366"
+                style={{ transform: [{ rotate: '-90deg' }] }}
+                lineCap="round"
+              />
+              <View style={{ position: 'absolute', flexDirection: 'row' }}>
+                <Text style={styles.userScoreValue}>
+                  {Math.round((movieDetail.score / 10) * 100)}
+                </Text>
+                <Text style={styles.scorePercent}>%</Text>
+              </View>
+            </View>
             <Text style={styles.userScoreTitle}>User Score</Text>
           </View>
 
           <View style={{ flex: 1 }}>
-            <View>
-              <Text style={styles.authorName}>{mockData.director}</Text>
-              <Text style={styles.authorRole}>Director, Writer</Text>
-            </View>
-            <View style={{ height: 15 }} />
-            <View>
-              <Text style={styles.authorName}>{mockData.writer}</Text>
-              <Text style={styles.authorRole}>Writer</Text>
-            </View>
+            {movieCredits.crew
+              .filter(
+                (member: any) =>
+                  member.job === 'Director' || member.job === 'Writer',
+              )
+              .map((member: any, idx: number) => (
+                <View key={member.id} style={{ marginBottom: 15 }}>
+                  <Text style={styles.authorName}>{member.name}</Text>
+                  <Text style={styles.authorRole}>{member.job}</Text>
+                </View>
+              ))}
           </View>
         </View>
-        <Text style={styles.shortDescription}>{mockData.shortDescription}</Text>
+        <Text style={styles.shortDescription}>
+          {movieDetail.shortDescription}
+        </Text>
         <Text style={styles.overviewTitle}>Overview</Text>
-        <Text style={styles.descriptionText}>{mockData.description}</Text>
+        <Text style={styles.descriptionText}>{movieDetail.description}</Text>
       </View>
       <View style={{ flexDirection: 'row', width: '100%', paddingLeft: 30 }}>
         <TouchableOpacity style={styles.addWatchlistButton}>
@@ -231,23 +204,25 @@ const MovieDetailScreen: React.FC = () => {
         <View>
           <Text style={styles.topBillCastTitle}>Top Billed Cast</Text>
           <FlatList
-            data={mockTopBilledCast}
+            data={movieCredits.cast}
             keyExtractor={item => item.id}
             horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 20 }}
+            showsHorizontalScrollIndicator={true}
+            contentContainerStyle={{
+              paddingHorizontal: 30,
+              paddingVertical: 25,
+            }}
+            ItemSeparatorComponent={() => <View style={{ width: 16 }} />}
             renderItem={({ item }) => (
-              <View style={{ marginRight: 20 }}>
+              <View style={styles.castMember}>
                 <Image
                   source={{ uri: item.imageUrl }}
-                  style={{ width: 100, height: 150, borderRadius: 5 }}
+                  style={{ width: '100%', height: 155, borderRadius: 5 }}
                 />
-                <Text
-                  style={{ color: '#000', fontWeight: '600', marginTop: 8 }}
-                >
-                  {item.name}
-                </Text>
-                <Text style={{ color: '#000', fontSize: 14 }}>{item.role}</Text>
+                <View style={{ paddingHorizontal: 15, paddingVertical: 10 }}>
+                  <Text style={styles.castName}>{item.name}</Text>
+                  <Text style={styles.castCharacter}>{item.character}</Text>
+                </View>
               </View>
             )}
           />
@@ -256,26 +231,36 @@ const MovieDetailScreen: React.FC = () => {
         <View>
           <Text style={styles.recommendationsTitle}>Recommendations</Text>
           <FlatList
-            data={mockRecommendations}
+            data={movieRecommendations}
             keyExtractor={item => item.id}
             horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 20 }}
+            contentContainerStyle={{
+              paddingHorizontal: 30,
+              paddingVertical: 25,
+            }}
+            ItemSeparatorComponent={() => <View style={{ width: 20 }} />}
             renderItem={({ item }) => (
-              <View style={{ marginRight: 20 }}>
+              <TouchableOpacity
+                style={styles.recommendedMovie}
+                onPress={() => handleRecommendationPress(item.id)}
+              >
                 <Image
                   source={{ uri: item.imageUrl }}
-                  style={{ width: 100, height: 150, borderRadius: 5 }}
+                  style={{ width: '100%', height: 162, borderRadius: 5 }}
                 />
-                <Text
-                  style={{ color: '#000', fontWeight: '600', marginTop: 8 }}
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    marginTop: 5,
+                  }}
                 >
-                  {item.name}
-                </Text>
-                <Text style={{ color: '#000', fontSize: 14 }}>
-                  User Score: {item.userScorePercent}%
-                </Text>
-              </View>
+                  <Text style={styles.recommendedMovieName}>{item.name}</Text>
+                  <Text style={styles.recommendedMovieScore}>
+                    {Math.round((item.score / 10) * 100)}%
+                  </Text>
+                </View>
+              </TouchableOpacity>
             )}
           />
         </View>
@@ -344,6 +329,17 @@ const styles = StyleSheet.create({
     paddingLeft: 30,
     paddingRight: 20,
   },
+  userScoreValue: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: '700',
+  },
+  scorePercent: {
+    color: '#fff',
+    fontSize: 6,
+    fontWeight: '700',
+    marginTop: 5,
+  },
   userScoreTitle: {
     fontSize: 18,
     fontWeight: '700',
@@ -405,9 +401,35 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: '600',
     color: '#000',
+    marginLeft: 30,
+  },
+  castMember: {
+    width: 160,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#E3E3E3',
+    borderRadius: 5,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 4, // Android shadow
+  },
+  castName: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#000',
+  },
+  castCharacter: {
+    fontSize: 16,
+    fontWeight: '400',
+    color: '#000',
   },
   separator: {
-    marginTop: 35,
+    marginTop: 15,
     marginBottom: 25,
     width: '100%',
     height: 2,
@@ -417,6 +439,21 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: '600',
     color: '#000',
+    marginLeft: 30,
+  },
+  recommendedMovie: {
+    width: 286,
+    backgroundColor: '#fff',
+  },
+  recommendedMovieName: {
+    color: '#000',
+    fontWeight: '400',
+    fontSize: 18,
+  },
+  recommendedMovieScore: {
+    color: '#000',
+    fontWeight: '400',
+    fontSize: 18,
   },
 });
 

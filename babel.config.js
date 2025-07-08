@@ -13,7 +13,15 @@ module.exports = {
           '@assets': './src/assets',
           '@constants': './src/constants',
           '@custom-types': './src/types',
+          '@redux': './src/redux',
         },
+      },
+    ],
+    [
+      'module:react-native-dotenv',
+      {
+        moduleName: '@env',
+        path: '.env',
       },
     ],
   ],
