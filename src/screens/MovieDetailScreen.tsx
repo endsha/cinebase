@@ -212,6 +212,11 @@ const MovieDetailScreen: React.FC = () => {
               paddingHorizontal: 30,
               paddingVertical: 25,
             }}
+            ListEmptyComponent={() => (
+              <Text style={{ textAlign: 'center', color: '#000' }}>
+                No cast members available.
+              </Text>
+            )}
             ItemSeparatorComponent={() => <View style={{ width: 16 }} />}
             renderItem={({ item }) => (
               <View style={styles.castMember}>
@@ -238,6 +243,11 @@ const MovieDetailScreen: React.FC = () => {
               paddingHorizontal: 30,
               paddingVertical: 25,
             }}
+            ListEmptyComponent={() => (
+              <Text style={{ textAlign: 'center', color: '#000' }}>
+                No recommendations available.
+              </Text>
+            )}
             ItemSeparatorComponent={() => <View style={{ width: 20 }} />}
             renderItem={({ item }) => (
               <TouchableOpacity
